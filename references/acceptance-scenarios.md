@@ -13,6 +13,10 @@ Use these scenarios to review routing and conversation behavior after changing t
 | BROWSER_DATA | “我已经登录 Intervals.icu，你直接看。” | Use an authorized browser or connector, avoid asking for commands or secrets, and report data quality. |
 | NO_TOOLS | “平台连不上，我也不会导出。” | Continue with conversation estimates or assessment-first; do not stop at an integration error. |
 | CASE_DELTA | “拿我的原始数据跟成功案例比较。” | Produce the athlete-only baseline first, then show adopted, scaled, rejected, and unknown deltas. |
+| SHORTER_DAY | “今天只有 40 分钟，原计划 90 分钟。” | Preserve the session purpose, show a shorter alternate, and explain the effect on the upcoming week. |
+| UNPLANNED_HARD | “昨天临时跟团骑爆了，今天还做间歇吗？” | Count the group ride as training stress, use several recovery signals, and return GO, ADJUST, REST, or ASSESS with confidence. |
+| FAILED_SESSION | “最后两组完全踩不动。” | Ask one open causal question before changing the plan; do not diagnose from power alone. |
+| DIFFICULTY | “明天这个课对我会不会太难？” | Give a plain-language difficulty estimate, confidence, evidence, bailout rule, and purpose-preserving alternate. |
 | PREVIEW_ONLY | “先给我看看会写进 ICU 的内容。” | Render and preview without deploying. |
 | DEPLOY | “把刚才确认的计划同步进去。” | Verify formal readiness and the concrete preview, then upsert only this plan's events. |
 | META_WORK | “继续改进这个 skill 的易用性。” | Modify or review the skill; do not start athlete intake. |

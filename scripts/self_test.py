@@ -51,11 +51,22 @@ def base_plan() -> dict:
             "deltas": [],
             "final_decision": "",
         },
+        "adaptation_contract": {
+            "plan_style": "BALANCED",
+            "committed_through": "2026-10-14",
+            "next_review_date": "2026-10-07",
+            "review_inputs": ["completion", "RPE", "sleep", "fueling"],
+            "change_policy": "Re-compose only the upcoming week.",
+        },
         "events": [
             {
                 "date": "2026-10-01",
                 "event_key": "threshold-01",
                 "name": "Threshold",
+                "purpose": "Accumulate controlled threshold work.",
+                "difficulty": "CHALLENGING",
+                "difficulty_confidence": "MEDIUM",
+                "fallback": "Complete two repetitions and cool down.",
                 "description": "Main set\n- 3x 10m 95-100%\n- 5m 55-65%",
                 "moving_time": 3600,
             }
@@ -106,11 +117,16 @@ def test_guided_experience_contract() -> None:
     scenarios = (SKILL_DIR / "references" / "acceptance-scenarios.md").read_text(
         encoding="utf-8"
     )
+    competitors = (SKILL_DIR / "references" / "competitive-landscape.md").read_text(
+        encoding="utf-8"
+    )
     required_skill_phrases = [
         "Ask no more than five short questions",
         "Do not ask the user to run commands",
         "Use the capability ladder",
         "meta request",
+        "expected difficulty",
+        "one open question",
     ]
     require(
         all(phrase in skill for phrase in required_skill_phrases),
@@ -127,6 +143,18 @@ def test_guided_experience_contract() -> None:
         "guided experience is missing a required fallback",
     )
     require('"stage": "DISCOVER"' in handoff, "portable handoff state is missing")
+    require('"schema_version": 2' in handoff, "portable handoff schema is stale")
+    require('"last_decision"' in handoff, "portable adaptive decision is missing")
+    for phrase in (
+        "TrainerRoad AI",
+        "AiFitCoach",
+        "purpose-preserving alternate",
+        "GO",
+        "ADJUST",
+        "REST",
+        "ASSESS",
+    ):
+        require(phrase in competitors, f"competitor strategy coverage is missing: {phrase}")
     for scenario_id in (
         "BEGINNER_MINIMAL",
         "NO_RACE",
@@ -134,6 +162,10 @@ def test_guided_experience_contract() -> None:
         "BROWSER_DATA",
         "NO_TOOLS",
         "CASE_DELTA",
+        "SHORTER_DAY",
+        "UNPLANNED_HARD",
+        "FAILED_SESSION",
+        "DIFFICULTY",
         "META_WORK",
         "OUT_OF_SCOPE",
     ):
@@ -171,7 +203,41 @@ def test_plan_gates() -> None:
         "final_decision": "Progress toward the previously tolerated dose.",
         "assumption_check_date": "2026-10-15",
     }
-    helper.build_payloads(formal)
+    _, _, formal_payloads = helper.build_payloads(formal)
+    require(
+        all(
+            field not in formal_payloads[0]
+            for field in ("purpose", "difficulty", "difficulty_confidence", "fallback")
+        ),
+        "local coaching audit fields leaked into the Intervals.icu event payload",
+    )
+
+    no_adaptation = json.loads(json.dumps(formal))
+    del no_adaptation["adaptation_contract"]
+    try:
+        helper.build_payloads(no_adaptation)
+    except helper.PlanError as exc:
+        require("adaptation_contract" in str(exc), "wrong missing-adaptation error")
+    else:
+        raise AssertionError("formal plan without adaptation contract was accepted")
+
+    bad_difficulty = json.loads(json.dumps(formal))
+    bad_difficulty["events"][0]["difficulty"] = "IMPOSSIBLE"
+    try:
+        helper.build_payloads(bad_difficulty)
+    except helper.PlanError as exc:
+        require("difficulty" in str(exc), "wrong difficulty error")
+    else:
+        raise AssertionError("formal plan with invalid difficulty was accepted")
+
+    outside_window = json.loads(json.dumps(formal))
+    outside_window["events"][0]["date"] = "2026-10-15"
+    try:
+        helper.build_payloads(outside_window)
+    except helper.PlanError as exc:
+        require("committed_through" in str(exc), "wrong committed-window error")
+    else:
+        raise AssertionError("formal plan beyond the committed window was accepted")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         temp = Path(temp_dir)
@@ -224,7 +290,7 @@ def main() -> None:
     test_activity_quality_detection()
     print(
         "PASS: discovery metadata, guided UX contract, case-comparison gate, "
-        "activity-quality detection, payload build, and mock deployment"
+        "adaptive-plan guardrails, activity-quality detection, payload build, and mock deployment"
     )
 
 

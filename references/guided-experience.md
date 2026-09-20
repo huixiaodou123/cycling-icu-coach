@@ -101,6 +101,14 @@ The first screen of any plan should contain:
 4. When to shorten, skip, or replace a session.
 5. What will be reviewed after one or two weeks.
 
+Before finalizing, show a simple plan-style control: conservative, balanced, or ambitious. Default to balanced when the user has no preference. This changes progression and optional volume within safe limits; it never overrides health gates, recent tolerance, or recovery needs.
+
+For every key ride, add:
+
+- expected difficulty in ordinary language and whether confidence is high, medium, or low;
+- one shorter or easier alternative that keeps the same purpose;
+- the single signal that would make the next session progress, hold, or reduce.
+
 Put research detail, case tables, data diagnostics, and Intervals.icu payloads after the actionable summary. Offer them for inspection, but do not make the user read them to understand the week.
 
 Use a compact preview before any calendar write:
@@ -109,6 +117,20 @@ Use a compact preview before any calendar write:
 |---|---|---:|---|---|
 
 Then say exactly how many events would be created, updated, or left unchanged. Avoid exposing UIDs or request payloads unless the user asks for technical details.
+
+## Review loop
+
+After a key workout, a missed session, or an unexpected hard ride, ask no more than five short items and reuse known data:
+
+1. What was completed or changed?
+2. How hard did it feel, and did quality fade?
+3. How are sleep, soreness, stress, motivation, and illness today?
+4. Was fueling or stomach comfort a factor?
+5. If the numbers changed unexpectedly: “What do you think contributed to that?”
+
+Do not assume the first numerical explanation is the cause. A performance drop may be biological, psychological, social, technical, or tactical. Ask only about domains suggested by the ride and the user's account.
+
+Return one decision: go as planned, adjust the next session, rest, or assess first. Explain why, how confident the decision is, and when it will be reviewed again. Re-compose the upcoming week when necessary; do not silently rewrite the whole block.
 
 ## Never strand the user
 

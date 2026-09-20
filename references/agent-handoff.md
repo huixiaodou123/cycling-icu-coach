@@ -8,9 +8,11 @@ Maintain a small state object in working memory or a private local artifact when
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "stage": "DISCOVER",
   "user_language": "zh-CN",
+  "stable_context_reviewed_at": null,
+  "current_state_observed_at": null,
   "goal_contract": {
     "primary_metric": null,
     "baseline": null,
@@ -20,6 +22,7 @@ Maintain a small state object in working memory or a private local artifact when
     "event_optional": true
   },
   "plan_scope": null,
+  "plan_style": "BALANCED",
   "equipment": {
     "power_meter": "unknown",
     "heart_rate_sensor": "unknown",
@@ -36,6 +39,17 @@ Maintain a small state object in working memory or a private local artifact when
   },
   "readiness_status": "DRAFT_ONLY",
   "case_comparison_status": "NOT_RUN",
+  "adaptation_contract": {
+    "committed_through": null,
+    "next_review_date": null,
+    "review_inputs": [],
+    "change_policy": null
+  },
+  "last_decision": {
+    "decision": null,
+    "reason": null,
+    "confidence": null
+  },
   "assumptions": [],
   "unresolved": [],
   "next_action": null
@@ -45,6 +59,8 @@ Maintain a small state object in working memory or a private local artifact when
 Allowed stages are `DISCOVER`, `ACQUIRE_DATA`, `SCREEN`, `ASSESS`, `DRAFT`, `COMPARE`, `PREVIEW`, `READY`, and `DEPLOYED`.
 
 Do not store API keys, access tokens, full medical history, precise home locations, or unrelated private data in this state. Store only the minimum conclusion needed for planning, such as “health screen answered; no reported issue” or “heart-rate threshold unverified”.
+
+Keep stable context and current state separate. Stable context includes ordinary availability, equipment, constraints, and coaching preferences; current state includes recent load, readiness, short-term schedule changes, and live measurements. Timestamp both so the receiving agent knows what must be refreshed.
 
 ## Handoff behavior
 

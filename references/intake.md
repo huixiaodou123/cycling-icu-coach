@@ -25,6 +25,7 @@ For every selected goal record:
 - repeatable test protocol and equipment;
 - why the goal matters and its priority.
 - preferred comparison source: the athlete's own successful history, matched research/cases, or both; default to both when available.
+- plan style: conservative, balanced, or ambitious; default to balanced and explain that safety gates do not change.
 
 Examples include:
 

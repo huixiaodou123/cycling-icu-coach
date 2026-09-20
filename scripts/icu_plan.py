@@ -35,6 +35,9 @@ PLAN_SCOPES = {"CYCLING_ONLY", "INTEGRATED_PERFORMANCE", "ASSESSMENT_ONLY"}
 READINESS_STATUSES = {"FORMAL_READY", "DRAFT_ONLY", "ASSESS_FIRST"}
 CASE_COMPARISON_STATUSES = {"NOT_RUN", "MATCHED", "CONTEXT_ONLY", "NO_VALID_MATCH"}
 CASE_DELTA_DECISIONS = {"ADOPT", "SCALE", "REJECT", "UNKNOWN"}
+PLAN_STYLES = {"CONSERVATIVE", "BALANCED", "AMBITIOUS"}
+WORKOUT_DIFFICULTIES = {"EASY", "MANAGEABLE", "CHALLENGING", "VERY_HARD", "UNKNOWN"}
+CONFIDENCE_LEVELS = {"HIGH", "MEDIUM", "LOW"}
 REQUIRED_INTAKE = {"training", "nutrition", "sleep", "supplements", "health"}
 REQUIRED_GOAL_FIELDS = {"primary_metric", "baseline", "target", "horizon", "test_protocol"}
 
@@ -102,6 +105,7 @@ def plan_metadata(plan: dict[str, Any]) -> dict[str, Any]:
     goal = plan.get("goal_contract")
     intake = plan.get("intake_confirmed", [])
     comparison = plan.get("case_comparison", {"status": "NOT_RUN"})
+    adaptation = plan.get("adaptation_contract")
     if not isinstance(intake, list) or not all(isinstance(item, str) for item in intake):
         raise PlanError("intake_confirmed must be an array of strings")
     if not isinstance(comparison, dict):
@@ -145,12 +149,39 @@ def plan_metadata(plan: dict[str, Any]) -> dict[str, Any]:
                 raise PlanError(f"FORMAL_READY case_comparison.{field} must be non-empty")
         if comparison_status == "MATCHED" and (not cases or not deltas):
             raise PlanError("MATCHED case comparisons require non-empty cases and deltas")
+        if not isinstance(adaptation, dict):
+            raise PlanError("FORMAL_READY plans require an adaptation_contract")
+        style = adaptation.get("plan_style")
+        if style not in PLAN_STYLES:
+            raise PlanError(
+                f"adaptation_contract.plan_style must be one of: {', '.join(sorted(PLAN_STYLES))}"
+            )
+        committed_through = valid_date(
+            adaptation.get("committed_through"), "adaptation_contract.committed_through"
+        )
+        next_review = valid_date(
+            adaptation.get("next_review_date"), "adaptation_contract.next_review_date"
+        )
+        if next_review > committed_through:
+            raise PlanError("adaptation_contract.next_review_date must not follow committed_through")
+        review_inputs = adaptation.get("review_inputs")
+        if (
+            not isinstance(review_inputs, list)
+            or not review_inputs
+            or not all(isinstance(item, str) and item.strip() for item in review_inputs)
+        ):
+            raise PlanError("adaptation_contract.review_inputs must be a non-empty array of strings")
+        if not isinstance(adaptation.get("change_policy"), str) or not adaptation[
+            "change_policy"
+        ].strip():
+            raise PlanError("adaptation_contract.change_policy must be non-empty")
     return {
         "plan_scope": scope,
         "readiness_status": readiness,
         "goal_contract": goal,
         "intake_confirmed": intake,
         "case_comparison": comparison,
+        "adaptation_contract": adaptation,
     }
 
 
@@ -158,7 +189,7 @@ def build_payloads(plan: dict[str, Any]) -> tuple[str, str, list[dict[str, Any]]
     if not isinstance(plan, dict):
         raise PlanError("Plan root must be an object")
     plan_id = normalized_plan_id(plan.get("plan_id"))
-    plan_metadata(plan)
+    metadata = plan_metadata(plan)
     athlete_id = str(plan.get("athlete_id") or os.getenv("INTERVALS_ICU_ATHLETE_ID") or "0")
     events = plan.get("events")
     if not isinstance(events, list) or not events:
@@ -184,6 +215,24 @@ def build_payloads(plan: dict[str, Any]) -> tuple[str, str, list[dict[str, Any]]
                 raise PlanError(f"{prefix}.description must be non-empty")
             if not any(line.lstrip().startswith("-") for line in description.splitlines()):
                 raise PlanError(f"{prefix}.description needs at least one dash-prefixed workout step")
+            if metadata["readiness_status"] == "FORMAL_READY":
+                for field in ("purpose", "fallback"):
+                    if not isinstance(event.get(field), str) or not event[field].strip():
+                        raise PlanError(f"{prefix}.{field} must be non-empty for FORMAL_READY plans")
+                if event.get("difficulty") not in WORKOUT_DIFFICULTIES:
+                    raise PlanError(
+                        f"{prefix}.difficulty must be one of: "
+                        f"{', '.join(sorted(WORKOUT_DIFFICULTIES))}"
+                    )
+                if event.get("difficulty_confidence") not in CONFIDENCE_LEVELS:
+                    raise PlanError(
+                        f"{prefix}.difficulty_confidence must be one of: "
+                        f"{', '.join(sorted(CONFIDENCE_LEVELS))}"
+                    )
+                if date > metadata["adaptation_contract"]["committed_through"]:
+                    raise PlanError(
+                        f"{prefix}.date is after adaptation_contract.committed_through"
+                    )
             moving_time = event.get("moving_time")
             if moving_time is not None and (not isinstance(moving_time, int) or moving_time <= 0):
                 raise PlanError(f"{prefix}.moving_time must be a positive integer in seconds")
@@ -380,12 +429,30 @@ def cmd_template(args: argparse.Namespace) -> None:
             "final_decision": "",
             "assumption_check_date": "",
         },
+        "adaptation_contract": {
+            "plan_style": "BALANCED",
+            "committed_through": (start + dt.timedelta(days=13)).isoformat(),
+            "next_review_date": (start + dt.timedelta(days=6)).isoformat(),
+            "review_inputs": [
+                "completion",
+                "RPE",
+                "interval fade",
+                "sleep",
+                "soreness",
+                "fueling",
+            ],
+            "change_policy": "Re-compose only the upcoming week and preserve session purpose.",
+        },
         "events": [
             {
                 "date": start.isoformat(),
                 "event_key": "endurance-01",
                 "name": "耐力骑",
                 "type": "Ride",
+                "purpose": "稳定耐力并观察后半程体感",
+                "difficulty": "MANAGEABLE",
+                "difficulty_confidence": "LOW",
+                "fallback": "缩短为 40 分钟轻松骑",
                 "description": "目标：稳定耐力。\n退出条件：异常疲劳则缩短。\n\nWarmup\n- 10m 50-60%\n\nEndurance\n- 50m 60-70%\n\nCooldown\n- 10m 50-60%",
                 "moving_time": 4200,
                 "carbs_per_hour": 30,

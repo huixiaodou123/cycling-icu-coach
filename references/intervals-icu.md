@@ -68,11 +68,22 @@ All commands accept `--athlete-id`; otherwise the script uses `INTERVALS_ICU_ATH
     "final_decision": "保留两次关键骑行，将阈值总时长渐进到历史有效剂量。",
     "assumption_check_date": "2026-10-06"
   },
+  "adaptation_contract": {
+    "plan_style": "BALANCED",
+    "committed_through": "2026-10-05",
+    "next_review_date": "2026-09-29",
+    "review_inputs": ["completion", "RPE", "interval fade", "sleep", "soreness", "fueling"],
+    "change_policy": "只重排即将到来的一周；保留关键课目的，不补做错过的强度。"
+  },
   "events": [
     {
       "date": "2026-09-22",
       "name": "耐力 + 低量冲刺",
       "type": "Ride",
+      "purpose": "轻松耐力并保持神经募集",
+      "difficulty": "MANAGEABLE",
+      "difficulty_confidence": "MEDIUM",
+      "fallback": "取消冲刺，只完成 45–60 分钟轻松耐力",
       "description": "目标：轻松耐力并保持神经募集。\n退出条件：热身后仍异常疲劳则只骑 Z1–Z2。\n补给：按已验证耐受量。\n\nWarmup\n- 15m 50-65%\n\nMain set 4x\n- 10s 150% 100-120rpm\n- 5m 55-65%\n\nEndurance\n- 45m 60-70%\n\nCooldown\n- 10m 50-60%",
       "moving_time": 5400,
       "carbs_per_hour": 40,
@@ -85,7 +96,9 @@ All commands accept `--athlete-id`; otherwise the script uses `INTERVALS_ICU_ATH
 
 Required fields are `plan_id`, a non-empty `events` array, and for every event `date`, `name`, and `description`. The helper creates a deterministic `uid` from `plan_id`, date, and event identity. An explicit `uid` may be provided but must be unique within the plan.
 
-`plan_scope` is `CYCLING_ONLY`, `INTEGRATED_PERFORMANCE`, or `ASSESSMENT_ONLY`. `readiness_status` is `DRAFT_ONLY` until the intake is complete. Live deployment requires `FORMAL_READY`, a complete `goal_contract`, confirmation flags for training, nutrition, sleep, supplements, and health, and a completed `case_comparison`. Its status is `MATCHED`, `CONTEXT_ONLY`, or `NO_VALID_MATCH`; `NOT_RUN` is valid only before the formal plan. Delta decisions are `ADOPT`, `SCALE`, `REJECT`, or `UNKNOWN`. Store only completion flags and concise comparison conclusions in this file, not sensitive intake answers.
+`plan_scope` is `CYCLING_ONLY`, `INTEGRATED_PERFORMANCE`, or `ASSESSMENT_ONLY`. `readiness_status` is `DRAFT_ONLY` until the intake is complete. Live deployment requires `FORMAL_READY`, a complete `goal_contract`, confirmation flags for training, nutrition, sleep, supplements, and health, a completed `case_comparison`, and an `adaptation_contract`. Plan style is `CONSERVATIVE`, `BALANCED`, or `AMBITIOUS`; the contract also records the committed window, next review, review inputs, and change policy. Case status is `MATCHED`, `CONTEXT_ONLY`, or `NO_VALID_MATCH`; `NOT_RUN` is valid only before the formal plan. Delta decisions are `ADOPT`, `SCALE`, `REJECT`, or `UNKNOWN`. Store only completion flags and concise comparison conclusions in this file, not sensitive intake answers.
+
+Every event in a formal plan also records `purpose`, `difficulty`, `difficulty_confidence`, and `fallback`. Difficulty is `EASY`, `MANAGEABLE`, `CHALLENGING`, `VERY_HARD`, or `UNKNOWN`; confidence is `HIGH`, `MEDIUM`, or `LOW`. These audit fields are kept in the local plan and are not sent as separate Intervals.icu event properties, so repeat the useful plain-language purpose and bailout instruction in `description`.
 
 Optional event fields passed through are `type`, `moving_time`, `carbs_per_hour`, `indoor`, `color`, `tags`, `target`, `sub_type`, and `calendar_id`. Default `type` is `Ride`; category is always `WORKOUT`.
 

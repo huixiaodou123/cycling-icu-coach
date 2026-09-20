@@ -25,6 +25,7 @@ Read [references/guided-experience.md](references/guided-experience.md) for ever
 - Before creating any formal plan, read and complete [references/intake.md](references/intake.md).
 - For every formal plan, read [references/case-comparison.md](references/case-comparison.md), create the athlete-only baseline first, and then document what comparable successful cases change or fail to justify.
 - For claims about current training practice or the latest trend, read [references/training-evidence.md](references/training-evidence.md). If freshness matters, also read [references/source-refresh.md](references/source-refresh.md) and refresh the relevant claims.
+- For competitor analysis, skill improvement, adaptive-coaching design, or comparisons with commercial coaches, read [references/competitive-landscape.md](references/competitive-landscape.md).
 - For any Intervals.icu read, preview, or write, read [references/intervals-icu.md](references/intervals-icu.md). Use `scripts/icu_plan.py` rather than rebuilding API calls.
 - For regression or usability checks, run `scripts/self_test.py` and review [references/acceptance-scenarios.md](references/acceptance-scenarios.md).
 
@@ -63,9 +64,10 @@ Keep the conversation moving when answers are incomplete. Offer an assessment ri
 3. Anchor the week around the minimum effective key sessions, goal-specific work, recovery, and optional strength. Add long or event-specific work only when it serves the goal. Count races and hard group rides as hard sessions.
 4. Progress from the athlete's recently tolerated load. Change one major stressor at a time and schedule recovery from observed response rather than a rigid percentage rule.
 5. Give every key workout a purpose, target range, RPE or talk-test cross-check, fueling target, and bailout rule. Use ranges rather than false precision.
-6. Validate that the week fits the athlete's actual calendar and that hard sessions have enough recovery.
-7. Compare the athlete-only baseline with the nearest valid successful cases. Adopt only differences that survive the transfer checks in `case-comparison.md`.
-8. Present the rationale, weekly structure, key progression, assumptions, case-derived changes, rejected case features, and adaptation rules before the detailed workout list.
+6. Label the expected difficulty of each key workout in plain language and state confidence. Offer a shorter or easier alternate that preserves its purpose.
+7. Validate that the week fits the athlete's actual calendar and that hard sessions have enough recovery. Show directional effects for a missed key session, a shorter time window, and an unplanned hard ride.
+8. Compare the athlete-only baseline with the nearest valid successful cases. Adopt only differences that survive the transfer checks in `case-comparison.md`.
+9. Commit only the next 7–14 days in detail. Keep later weeks provisional, state the next review point, and present the rationale, progression, assumptions, case-derived changes, rejected case features, and adaptation rules.
 
 Do not cram missed intensity into later days. Preserve the next important session or reduce the week.
 
@@ -80,6 +82,8 @@ Do not cram missed intensity into later days. Preserve the next important sessio
 ## Adapt from feedback
 
 Review trends across several signals: completion, interval fade, RPE, heart-rate response, sleep, soreness, motivation, illness, fueling, and life stress. A single HRV or readiness value cannot decide the day.
+
+When a workout fails or performance drops, ask one open question about what happened before changing the prescription. Use the data to locate the problem, then consider the relevant biological, psychological, social, technical, and tactical causes. End the review with `GO`, `ADJUST`, `REST`, or `ASSESS`, a plain-language reason, confidence, and the next review point.
 
 When response is poor, first reduce density, duration, or intensity and preserve consistency. Stop hard training and recommend appropriate professional assessment for chest pain, fainting, unexplained breathlessness, acute illness, a worsening injury, or persistent functional decline.
 
@@ -104,7 +108,8 @@ For a planning request, return:
 - an athlete-only baseline, matched-case table, plan delta, and final decision; state `NO_VALID_MATCH` when no defensible comparator exists;
 - the plan thesis and the athlete-specific reason for it;
 - a compact week-by-week schedule with total time and key sessions;
-- key workout details and adjustment rules;
+- key workout details, expected difficulty, confidence, purpose-preserving alternates, and adjustment rules;
+- a rolling adaptation contract stating plan style, committed window, next review, review inputs, and change policy;
 - the validated Intervals.icu plan JSON location;
 - the preview result, and deployment receipt only if a live write was authorized.
 

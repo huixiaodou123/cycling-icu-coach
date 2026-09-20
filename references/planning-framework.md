@@ -18,6 +18,18 @@ Capture the following in a short profile:
 
 Do not infer precision from stale FTP or auto-estimated zones. When power and internal response disagree, inspect heat, fatigue, hydration, fueling, sensor quality, and zone validity.
 
+Separate stable context from current state. Stable context includes long-term goals, equipment, ordinary availability, health constraints, and coaching preferences. Current state includes thresholds, recent load, wellness, schedule exceptions, and readiness. Timestamp current data and label each important value as measured, configured, estimated, stale, or missing.
+
+## Choose the coaching style
+
+Use `BALANCED` unless the athlete chooses another style:
+
+- `CONSERVATIVE`: smaller progressions, more completion margin, and earlier review.
+- `BALANCED`: the minimum effective key work plus sustainable progression.
+- `AMBITIOUS`: more optional volume or a slightly faster progression only when recent tolerance, fueling, sleep, and availability support it.
+
+The style cannot override symptoms, health gates, hard-day spacing, or recently tolerated load.
+
 ## Plan without a power meter
 
 When the athlete has no power meter, do not prescribe watts or `%FTP`, and do not present configured FTP, W′, P-max, or platform power zones as measured ability. Build cycling sessions from duration, heart-rate ranges when validated, RPE, breathing/talk test, cadence, terrain, and repeatable route or climb times.
@@ -86,6 +98,8 @@ Common phases are preparation, development, goal-specific work, verification, an
 - Before a metric retest, reduce fatigue enough to make the result comparable; do not turn every block into a race taper.
 - For an event, taper by reducing volume while preserving small doses of relevant intensity; avoid last-minute fitness tests.
 
+Show the full block direction, but commit only the next 7–14 days as executable events. Treat later weeks as provisional. Set a review date and state which observations can progress, maintain, reduce, or replace the next week.
+
 Use Intervals.icu load metrics as context rather than a command. CTL, ATL, form, and ramp rate depend on model assumptions and do not replace athlete response.
 
 ## Compare before finalizing
@@ -107,6 +121,18 @@ Each key workout should specify:
 5. Cadence or terrain only if it serves the event demand.
 6. Fuel and fluid target appropriate to duration and intensity.
 7. Bailout rule and an easier fallback.
+
+For each key session, predict difficulty as `EASY`, `MANAGEABLE`, `CHALLENGING`, `VERY_HARD`, or `UNKNOWN`. Base it on recent comparable sessions, target duration, accumulated fatigue, and current data quality. Add high/medium/low confidence and a short reason. This is a coaching estimate, not a physiological certainty.
+
+Offer at least one purpose-preserving alternate. Change duration, interval count, recovery, terrain, indoor/outdoor mode, or target system before replacing the session family. When a user has less time, protect the warm-up and the main stimulus instead of compressing every step.
+
+Before finalizing the week, preview three common scenarios in directional language:
+
+- the key session is missed;
+- an unplanned hard group ride or race occurs;
+- the available time is cut substantially.
+
+State what moves, reduces, or disappears and why. Do not predict an exact FTP or performance change unless a validated athlete-specific model supports it.
 
 Useful session families:
 
@@ -138,6 +164,16 @@ Judge trends, not isolated wearable scores.
 
 After a missed key session, do not automatically move it to the next day. Protect spacing and the next highest-priority stimulus.
 
+When execution differs from the plan, first identify what changed, then investigate why. Use objective data to locate the change and one open question to test relevant causes:
+
+- biological: fatigue, illness, sleep, hydration, fueling, pain;
+- psychological: confidence, fear, motivation, perceived effort;
+- social: work, family, travel, time pressure;
+- technical: handling, position, equipment, eating/drinking skill;
+- tactical: pacing, surges, positioning, response choices.
+
+Choose one decision after the review: `GO`, `ADJUST`, `REST`, or `ASSESS`. Record the reason, confidence, and next check-in. Re-compose the upcoming week; preserve the longer block unless the goal, availability, or response pattern has materially changed.
+
 ## Plan review
 
 Before release, confirm:
@@ -147,7 +183,9 @@ Before release, confirm:
 - the long ride and fueling progression match the event;
 - recovery and taper are visible;
 - every key workout has a bailout rule;
+- every key workout has a difficulty estimate, confidence, and purpose-preserving alternate;
 - assumptions and low-confidence choices are explicit;
 - professional practices have been scaled to the athlete.
 - the athlete-only baseline, matched cases, adopted deltas, and rejected deltas are visible;
 - the selected output respects `CYCLING_ONLY`, `INTEGRATED_PERFORMANCE`, or `ASSESSMENT_ONLY` scope.
+- the adaptation contract names the plan style, committed window, next review, review inputs, and change policy.
