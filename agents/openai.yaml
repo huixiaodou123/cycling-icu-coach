@@ -1,0 +1,6 @@
+interface:
+  display_name: "单车 ICU 训练教练"
+  short_description: "用自然语言分步制定、对照并部署循证单车训练计划"
+  default_prompt: "使用 $cycling-icu-coach 像普通教练一样一步步引导我；我只用自然语言回答，你自动判断需要哪些数据、是否有设备以及下一步做什么，正式计划前先给我看易懂的摘要和 Intervals.icu 预览。"
+policy:
+  allow_implicit_invocation: true
